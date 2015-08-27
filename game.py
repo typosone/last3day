@@ -137,6 +137,14 @@ class Game:
             elif bb + self.ball_dy <= tt <= bb:
                 return Game.BOTTOM
 
+        # check vertical range
+        if tb <= bt + self.ball_dy and bb + self.ball_dy <= tt:
+            # check left
+            if bl + self.ball_dx <= tr <= bl:
+                return Game.LEFT
+            elif br <= tl <= br + self.ball_dx:
+                return Game.RIGHT
+
         return None
 
     def move_ball(self):
