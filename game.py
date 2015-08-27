@@ -198,7 +198,6 @@ class Game:
 
             self.block_list.remove(block)
             block.delete()
-            print(self.paddle.position)
             break
 
         self.ball.x += self.ball_dx
