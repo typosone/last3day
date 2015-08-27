@@ -119,14 +119,14 @@ class Game:
     def ball_collided(self, target):
         # ball's left, top, right, bottom
         bl = self.ball.x
-        bt = self.ball.y
+        bb = self.ball.y
         br = bl + self.ball.width
-        bb = bt - self.ball.height
+        bt = bb + self.ball.height
         # target's left, top, right, bottom
         tl = target.x
-        tt = target.y
+        tb = target.y
         tr = tl + target.width
-        tb = tt - target.height
+        tt = tb + target.height
 
         # check horizontal range
         if tl <= br + self.ball_dx and bl + self.ball_dx <= tr:
@@ -137,6 +137,8 @@ class Game:
             elif bb + self.ball_dy <= tt <= bb:
                 return Game.BOTTOM
 
+        return None
+
     def move_ball(self):
         if self.ball.x + self.ball.width + self.ball_dx >= self.window.width:
             self.flip_ball_vector(True)
@@ -146,9 +148,9 @@ class Game:
             self.flip_ball_vector(True)
             self.ball.x = 0
 
-        if self.ball.y + self.ball_dy >= self.window.height:
+        if self.ball.y + self.ball.height + self.ball_dy >= self.window.height:
             self.flip_ball_vector()
-            self.ball.y = self.window.height
+            self.ball.y = self.window.height - self.ball.height
 
         paddle_collide = self.ball_collided(self.paddle)
         if paddle_collide == Game.BOTTOM:
@@ -172,6 +174,24 @@ class Game:
                 self.set_ball_angle(base_angle + 180 - 5)
             elif paddle_part[4] <= cx < paddle_part[5]:
                 self.set_ball_angle(base_angle + 180 - 10)
+
+        for block in self.block_list:
+            collided = self.ball_collided(block)
+            if collided is None:
+                continue
+            if collided == Game.TOP:
+                self.flip_ball_vector()
+            if collided == Game.BOTTOM:
+                self.flip_ball_vector()
+            elif collided == Game.RIGHT:
+                self.flip_ball_vector(True)
+            if collided == Game.LEFT:
+                self.flip_ball_vector(True)
+
+            self.block_list.remove(block)
+            block.delete()
+            print(self.paddle.position)
+            break
 
         self.ball.x += self.ball_dx
         self.ball.y += self.ball_dy
